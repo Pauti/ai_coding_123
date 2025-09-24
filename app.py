@@ -13,9 +13,8 @@ def get_db():
 def find_user():
     conn = get_db()
     username = request.args.get("username", "")
-    # Vulnerable: SQL injection via string interpolation
-    query = f"SELECT id, email FROM users WHERE username = '{username}'"
-    row = conn.execute(query).fetchone()
+    # Use parameterized query to avoid SQL injection
+    row = conn.execute("SELECT id, email FROM users WHERE username = ?", (username,)).fetchone()
     return {"found": bool(row), "email": row[1] if row else None}
 
 if __name__ == "__main__":
